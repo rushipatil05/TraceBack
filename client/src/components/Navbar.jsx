@@ -8,7 +8,7 @@ export function Navbar({ currentSection, onNavigate }) {
       <div className="container mx-auto flex items-center justify-between">
         <div className="flex items-center gap-2">
           <AlertTriangle className="h-8 w-8 text-yellow-400" />
-          <span className="text-xl font-bold text-white">Lost & Found</span>
+          <span className="text-xl font-bold text-white">TraceBack</span>
         </div>
         <div className="flex gap-6">
           <Link 
