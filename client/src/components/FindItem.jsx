@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Search, X, MapPin, User, Phone } from "lucide-react";
+import { Search, X, User, Phone, PackageIcon, Paperclip, Mail } from "lucide-react";
 import axios from "axios";
 
 export function FindItem() {
@@ -31,10 +31,10 @@ export function FindItem() {
   // Filter items based on search term
   const filteredItems = searchTerm
     ? items.filter(item =>
-        item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (item.location && item.location.toLowerCase().includes(searchTerm.toLowerCase()))
-      )
+      item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (item.location && item.location.toLowerCase().includes(searchTerm.toLowerCase()))
+    )
     : items;
 
   return (
@@ -64,9 +64,9 @@ export function FindItem() {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredItems.map((item) => (
             <div key={item._id} className="bg-black/50 rounded-lg overflow-hidden">
-              {item.image && (
+              {item.file && (
                 <img
-                  src={item.image}
+                  src={item.file}
                   alt={item.title}
                   className="w-full h-48 object-cover"
                 />
@@ -89,38 +89,45 @@ export function FindItem() {
 
       {/* Modal */}
       {selectedItem && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-900 rounded-lg max-w-md w-full p-6 relative">
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-[0_4px_30px_rgba(0,0,0,0.2)] rounded-2xl max-w-md w-full overflow-hidden relative p-6">
+
             <button
               onClick={handleCloseModal}
-              className="absolute top-4 right-4 text-black-400 bg-white/20 hover:text-black rounded-lg disabled:opacity-50 p-2 hover:bg-white/30"
+              className="absolute top-4 right-4 text-white/70 hover:text-white bg-black/20 hover:bg-black/30 rounded-lg p-2 transition"
             >
               <X className="h-6 w-6" />
             </button>
 
             <div className="space-y-4">
-              {selectedItem.image && (
+              {selectedItem.file && (
                 <img
-                  src={selectedItem.image}
+                  src={selectedItem.file}
                   alt={selectedItem.title}
-                  className="w-full h-48 object-cover rounded-lg"
+                  className="w-full max-h-80 mx-auto object-contain rounded-lg"
                 />
               )}
 
               <h2 className="text-2xl font-bold text-white">{selectedItem.title}</h2>
 
               <div className="space-y-3">
-                <div className="flex items-center gap-2 text-gray-300">
+                <div className="flex items-center gap-2 text-gray-200">
                   <User className="h-5 w-5 text-yellow-400" />
                   <span>Finder: {selectedItem.name}</span>
                 </div>
 
-                <div className="flex items-center gap-2 text-gray-300">
+                <div className="flex items-center gap-2 text-gray-200">
                   <Phone className="h-5 w-5 text-yellow-400" />
                   <span>Phone: {selectedItem.phone}</span>
                 </div>
 
-                <div className="flex items-center gap-2 text-gray-300">
+                <div className="flex items-center gap-2 text-gray-200">
+                  <Mail className="h-5 w-5 text-yellow-400" />
+                  <span>Email: {selectedItem.email}</span>
+                </div>
+
+                <div className="flex items-center gap-2 text-gray-200">
+                  <Paperclip className="h-5 w-5 text-yellow-400" />
                   <span>Description: {selectedItem.description}</span>
                 </div>
               </div>

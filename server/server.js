@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
 import itemRoutes from "./routes/itemRoutes.js";
-
+import Post from "./models/Item.js"
 dotenv.config();
 
 const app = express();

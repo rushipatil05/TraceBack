@@ -41,10 +41,19 @@ router.post("/", upload.single("file"), async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const items = await Item.find().sort({ createdAt: -1 });
-    res.json(items);
+
+    // Add full URL for file
+    const host = req.protocol + "://" + req.get("host");
+    const itemsWithFullURL = items.map(item => ({
+      ...item._doc,
+      file: item.file ? host + "/" + item.file.replace("\\", "/") : null
+    }));
+
+    res.json(itemsWithFullURL);
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 });
+
 
 export default router;
