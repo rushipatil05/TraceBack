@@ -29,7 +29,7 @@ export function PostItem() {
     });
 
     try {
-      await axios.post("http://localhost:5000/api/items", data, {
+      await axios.post("https://lostandfound-pq2d.onrender.com/api/items", data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       alert("Item Posted Successfully!");

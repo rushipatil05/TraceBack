@@ -11,7 +11,7 @@ export function FindItem() {
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/items");
+        const res = await axios.get("https://lostandfound-pq2d.onrender.com/api/items");
         setItems(res.data);
       } catch (err) {
         console.error("Error fetching items:", err);
