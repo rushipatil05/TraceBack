@@ -1,57 +1,32 @@
-import express from "express";
-import multer from "multer";
-import Item from "../models/Item.js";
+  import express from "express";
+  import Item from "../models/Item.js";
 
-const router = express.Router();
+  const router = express.Router();
 
-// Multer setup for file upload
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/");
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + "-" + file.originalname);
-  }
-});
+  router.post("/", async (req, res) => {
+    try {
+      console.log("REQ BODY:", req.body); // 🔍 debug
+      const { name, email, phone, title, description, file } = req.body;
 
-const upload = multer({ storage });
+      if (!file) {
+        console.log("❌ File URL missing in request body");
+      }
 
-router.post("/", upload.single("file"), async (req, res) => {
-  try {
-    const { name, email, phone, title, description } = req.body;
+      const newItem = new Item({
+        name,
+        email,
+        phone,
+        title,
+        description,
+        file, // should now contain the Cloudinary URL
+      });
 
-    const newItem = new Item({
-      name,
-      email,
-      phone,
-      title,
-      description,
-      file: req.file ? req.file.path : null
-    });
+      await newItem.save();
+      res.status(201).json({ success: true, item: newItem });
+    } catch (err) {
+      console.error("Error saving item:", err);
+      res.status(500).json({ success: false, message: err.message });
+    }
+  });
 
-    await newItem.save();
-    res.json({ success: true, message: "Item posted successfully", newItem });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-});
-
-// GET all items
-router.get("/", async (req, res) => {
-  try {
-    const items = await Item.find().sort({ createdAt: -1 });
-
-    const host = req.protocol + "://" + req.get("host");
-    const itemsWithFullURL = items.map(item => ({
-      ...item._doc,
-      file: item.file ? host + "/" + item.file.replace("\\", "/") : null
-    }));
-
-    res.json(itemsWithFullURL);
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-});
-
-
-export default router;
+  export default router;
