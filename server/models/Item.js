@@ -6,7 +6,7 @@ const itemSchema = new mongoose.Schema({
   phone: { type: String, required: true },
   title: { type: String, required: true },
   description: { type: String, required: true },
-  file: { type: String }, // store file path
+  file: { type: String }, 
 }, { timestamps: true });
 
 export default mongoose.model("Item", itemSchema);

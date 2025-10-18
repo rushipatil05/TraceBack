@@ -16,7 +16,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// POST route
 router.post("/", upload.single("file"), async (req, res) => {
   try {
     const { name, email, phone, title, description } = req.body;
@@ -42,7 +41,6 @@ router.get("/", async (req, res) => {
   try {
     const items = await Item.find().sort({ createdAt: -1 });
 
-    // Add full URL for file
     const host = req.protocol + "://" + req.get("host");
     const itemsWithFullURL = items.map(item => ({
       ...item._doc,
