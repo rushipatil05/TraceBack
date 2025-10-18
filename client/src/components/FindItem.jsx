@@ -88,7 +88,6 @@ export function FindItem() {
             >
               <X className="h-6 w-6" />
             </button>
-
             {selectedItem.file && (
               <img
                 src={selectedItem.file}
