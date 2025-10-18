@@ -1,59 +1,28 @@
 import express from "express";
-import multer from "multer";
 import Item from "../models/Item.js";
 
 const router = express.Router();
 
-// Multer setup for file upload
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/");
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + "-" + file.originalname);
-  }
-});
-
-const upload = multer({ storage });
-
-// POST route
-router.post("/", upload.single("file"), async (req, res) => {
+router.post("/", async (req, res) => {
   try {
-    const { name, email, phone, title, description } = req.body;
+    const { name, email, phone, title, description, file } = req.body;
 
+    // Save directly to MongoDB
     const newItem = new Item({
       name,
       email,
       phone,
       title,
       description,
-      file: req.file ? req.file.path : null
+      file, // file URL sent from frontend
     });
 
     await newItem.save();
-    res.json({ success: true, message: "Item posted successfully", newItem });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.status(201).json({ success: true, item: newItem });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: err.message });
   }
 });
-
-// GET all items
-router.get("/", async (req, res) => {
-  try {
-    const items = await Item.find().sort({ createdAt: -1 });
-
-    // Add full URL for file
-    const host = req.protocol + "://" + req.get("host");
-    const itemsWithFullURL = items.map(item => ({
-      ...item._doc,
-      file: item.file ? host + "/" + item.file.replace("\\", "/") : null
-    }));
-
-    res.json(itemsWithFullURL);
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-});
-
 
 export default router;
