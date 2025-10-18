@@ -51,19 +51,11 @@ export function PostItem() {
       // ✅ Send to backend (MongoDB)
       await axios.post("https://lostandfound-pq2d.onrender.com/api/items", {
         ...formData,
-<<<<<<< HEAD
         file: uploadedFileUrl, 
       });
 
       alert("Item posted successfully!");
       console.log("Sending to backend:", { ...formData, file: uploadedFileUrl });
-=======
-        file: uploadedFileUrl, // send image URL to backend
-      });
-
-      alert("Item posted successfully!");
-
->>>>>>> fbfea3cef4b165d0857265ed01785e7fb6a6d97d
       // ✅ Reset form
       setFormData({ name: "", email: "", phone: "", title: "", description: "" });
       setFile(null);
