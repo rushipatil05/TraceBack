@@ -3,7 +3,6 @@ import Item from "../models/Item.js";
 
 const router = express.Router();
 
-// ✅ POST new item
 router.post("/", async (req, res) => {
   try {
     const { name, email, phone, title, description, file } = req.body;
@@ -17,7 +16,6 @@ router.post("/", async (req, res) => {
   }
 });
 
-// ✅ GET all items
 router.get("/", async (req, res) => {
   try {
     const items = await Item.find().sort({ createdAt: -1 });
