@@ -21,10 +21,10 @@ export function FindItem() {
 
   const filteredItems = searchTerm
     ? items.filter(item =>
-        item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (item.location && item.location.toLowerCase().includes(searchTerm.toLowerCase()))
-      )
+      item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (item.location && item.location.toLowerCase().includes(searchTerm.toLowerCase()))
+    )
     : items;
 
   return (
@@ -79,25 +79,41 @@ export function FindItem() {
 
       {/* Modal */}
       {selectedItem && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl rounded-2xl max-w-md w-full overflow-hidden relative p-6">
-            
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 m-0"
+          style={{
+            width: "100vw",
+            height: "100vh", // Ensure overlay fills viewport
+            top: 0,
+            left: 0,
+            position: "fixed",
+            backdropFilter: "blur(12px)", // Apply blur effect here
+            margin: 0, // Ensure no margin
+          }}
+        >
+          {/* Modal card */}
+          <div className="bg-white/10 backdrop-blur-xl border-2 border-white/30 shadow-2xl rounded-2xl max-w-md w-full p-6 relative">
+            {/* Close Button */}
             <button
               onClick={() => setSelectedItem(null)}
-              className="absolute top-4 right-4 text-white/70 hover:text-white bg-black/20 hover:bg-black/30 rounded-lg p-2 transition"
+              className="absolute top-4 right-4 text-white/70 hover:text-white transition-colors"
             >
-              <X className="h-6 w-6" />
+              <X size={24} />
             </button>
+
+            {/* Item Image */}
             {selectedItem.file && (
               <img
                 src={selectedItem.file}
                 alt={selectedItem.title}
-                className="w-full max-h-80 mx-auto object-contain rounded-lg"
+                className="w-full max-h-80 object-contain rounded-lg mx-auto"
               />
             )}
 
+            {/* Item Title */}
             <h2 className="text-2xl font-bold text-white mt-4">{selectedItem.title}</h2>
 
+            {/* Item Details */}
             <div className="space-y-3 mt-3 text-gray-200">
               <div className="flex items-center gap-2">
                 <User className="h-5 w-5 text-yellow-400" />
@@ -119,6 +135,9 @@ export function FindItem() {
           </div>
         </div>
       )}
+
+
+
     </div>
   );
 }

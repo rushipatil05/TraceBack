@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Upload } from "lucide-react";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export function PostItem() {
   const [formData, setFormData] = useState({
@@ -12,7 +14,7 @@ export function PostItem() {
   });
 
   const [file, setFile] = useState(null);
-  const [fileUrl, setFileUrl] = useState(""); 
+  const [fileUrl, setFileUrl] = useState("");
   const [uploading, setUploading] = useState(false);
 
   const handleChange = (e) => {
@@ -27,7 +29,7 @@ export function PostItem() {
     e.preventDefault();
 
     if (!file) {
-      alert("Please select a file to upload");
+      toast.warning("Please select a file to upload");
       return;
     }
 
@@ -45,24 +47,29 @@ export function PostItem() {
       );
 
       const uploadedFileUrl = cloudinaryRes.data.secure_url;
-      setFileUrl(uploadedFileUrl); // ✅ store it in state
-      console.log("✅ Uploaded to Cloudinary:", uploadedFileUrl);
+      setFileUrl(uploadedFileUrl);
 
       // ✅ Send to backend (MongoDB)
       await axios.post("https://lostandfound-pq2d.onrender.com/api/items", {
         ...formData,
-        file: uploadedFileUrl, 
+        file: uploadedFileUrl,
       });
 
-      alert("Item posted successfully!");
+      toast.success("Item posted successfully!");
       console.log("Sending to backend:", { ...formData, file: uploadedFileUrl });
-      // ✅ Reset form
-      setFormData({ name: "", email: "", phone: "", title: "", description: "" });
+
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        title: "",
+        description: "",
+      });
       setFile(null);
       setFileUrl("");
     } catch (err) {
       console.error("Error posting item:", err);
-      alert("Error: " + err.message);
+      toast.error("❌ Error: " + err.message);
     } finally {
       setUploading(false);
     }
@@ -70,6 +77,8 @@ export function PostItem() {
 
   return (
     <div>
+      <ToastContainer position="top-center" autoClose={3000} />
+
       <h1 className="text-3xl font-bold text-center text-white mb-8">
         Post Found Item
       </h1>
@@ -134,7 +143,6 @@ export function PostItem() {
           </label>
           <input type="file" id="file" className="hidden" onChange={handleFileChange} />
 
-          {/* ✅ Preview uploaded file */}
           {fileUrl && (
             <div className="mt-4 text-center">
               <img

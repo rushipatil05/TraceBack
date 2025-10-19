@@ -1,7 +1,5 @@
 import React from 'react';
 import { Search, AlertTriangle } from 'lucide-react';
-
-
 export function Home({ onNavigate }) {
   return (
     <div className="space-y-16">
