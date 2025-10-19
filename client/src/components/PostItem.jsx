@@ -12,7 +12,7 @@ export function PostItem() {
   });
 
   const [file, setFile] = useState(null);
-  const [fileUrl, setFileUrl] = useState(""); // 👈 store Cloudinary URL
+  const [fileUrl, setFileUrl] = useState(""); 
   const [uploading, setUploading] = useState(false);
 
   const handleChange = (e) => {

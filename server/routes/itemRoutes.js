@@ -6,7 +6,7 @@ import Item from "../models/Item.js";
 router.post("/", async (req, res) => {
   try {
     const { name, email, phone, title, description, file } = req.body;
-
+    console.log("Received file value:", file);
     // Save directly to MongoDB
     const newItem = new Item({
       name,
