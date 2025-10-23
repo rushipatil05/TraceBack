@@ -1,35 +1,33 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route, BrowserRouter } from "react-router-dom";
+
 import { Navbar } from "./components/Navbar.jsx";
 import { Home } from "./components/Home.jsx";
 import { FindItem } from "./components/FindItem.jsx";
 import { PostItem } from "./components/PostItem.jsx";
 import { AboutUs } from "./components/AboutUs.jsx";
+import Login from "./components/Login.jsx";
+import Signup from "./components/signup.jsx";
 
 function App() {
-  const [currentSection, setCurrentSection] = useState("home");
-  useEffect(() => {
-    const savedSection = localStorage.getItem("currentSection");
-    if (savedSection) {
-      setCurrentSection(savedSection);
-    }
-  }, []);
-
-  // Save section to localStorage whenever it changes
-  useEffect(() => {
-    localStorage.setItem("currentSection", currentSection);
-  }, [currentSection]);
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black">
-      <>
-        <Navbar currentSection={currentSection} onNavigate={setCurrentSection} />
-        <main className="container mx-auto px-4 py-12">
-          {currentSection === "home" && <Home onNavigate={setCurrentSection} />}
-          {currentSection === "find" && <FindItem />}
-          {currentSection === "post" && <PostItem />}
-          {currentSection === "about" && <AboutUs />}
+      <BrowserRouter future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true,
+        }}>
+        <Navbar />
+        <main>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/find" element={<FindItem />} />
+            <Route path="/post" element={<PostItem />} />
+            <Route path="/about" element={<AboutUs />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+          </Routes>
         </main>
-      </>
+      </BrowserRouter>
     </div>
   );
 }
