@@ -9,7 +9,7 @@ export default function Signup() {
 
     const handleSubmit = (e) =>{
         e.preventDefault();
-        axios.post('https://lostandfound-pq2d.onrender.com/api/register',{name,email,password}).then(result => console.log(result))
+        axios.post('https://lostandfound-pq2d.onrender.com/api/user/register',{name,email,password}).then(result => console.log(result))
         .catch(err=>console.log(err));
     }
   return (
