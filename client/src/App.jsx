@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, BrowserRouter } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import { Navbar } from "./components/Navbar.jsx";
 import { Home } from "./components/Home.jsx";
@@ -7,15 +7,12 @@ import { FindItem } from "./components/FindItem.jsx";
 import { PostItem } from "./components/PostItem.jsx";
 import { AboutUs } from "./components/AboutUs.jsx";
 import Login from "./components/Login.jsx";
-import Signup from "./components/signup.jsx";
+import Signup from "./components/Signup.jsx";
 
 function App() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black">
-      <BrowserRouter future={{
-          v7_startTransition: true,
-          v7_relativeSplatPath: true,
-        }}>
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Navbar />
         <main>
           <Routes>
@@ -24,7 +21,7 @@ function App() {
             <Route path="/post" element={<PostItem />} />
             <Route path="/about" element={<AboutUs />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/Signup" element={<Signup />} />
+            <Route path="/signup" element={<Signup />} />
           </Routes>
         </main>
       </BrowserRouter>
