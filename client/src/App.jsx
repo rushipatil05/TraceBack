@@ -24,7 +24,7 @@ function App() {
             <Route path="/post" element={<PostItem />} />
             <Route path="/about" element={<AboutUs />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
+            <Route path="/Signup" element={<Signup />} />
           </Routes>
         </main>
       </BrowserRouter>

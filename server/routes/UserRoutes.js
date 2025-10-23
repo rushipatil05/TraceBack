@@ -1,5 +1,5 @@
 const express = require('express');
-import User from '../models/User';
+import User from '../models/User.js';
 
 const app = express();
 app.use(express.json()); 
