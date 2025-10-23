@@ -1,4 +1,4 @@
-const express = require('express');
+import express from "express";
 import User from '../models/User.js';
 
 const app = express();
