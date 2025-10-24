@@ -5,8 +5,9 @@ import { Link } from "react-router-dom";
 export function Home({ onNavigate }) {
   return (
     <div className="space-y-16">
-      <section className="text-center space-y-6">
-        <h1 className="text-5xl font-bold text-white">
+      <section className="text-center space-y-6 ">
+        <h1 className="text-5xl font-bold text-white ">
+          <br />
           Lost Something? <span className="text-yellow-400">Find it Here</span>
         </h1>
         <p className="text-xl text-gray-300 max-w-2xl mx-auto">
