@@ -13,13 +13,12 @@ function App() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black">
       <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-        <Navbar />
-        <main>
+        <main >
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/find" element={<FindItem />} />
             <Route path="/post" element={<PostItem />} />
-            <Route path="/about" element={<AboutUs />} />
+            <Route path="/home" element={<AboutUs />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
           </Routes>

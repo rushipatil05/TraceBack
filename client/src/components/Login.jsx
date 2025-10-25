@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -11,15 +10,13 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-
     try {
       const response = await axios.post(
         "https://lostandfound-pq2d.onrender.com/api/user/login",
         { email, password }
       );
-      console.log(response.data);
-      navigate("/");
-
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+      navigate("/home");
     } catch (err) {
       console.error(err);
       setError(
