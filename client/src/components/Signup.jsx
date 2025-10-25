@@ -1,19 +1,45 @@
-import axios from "axios"; //use to post the data
+import axios from "axios";
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Signup() {
-    const[name,setName]=useState();
-    const[email,setEmail]=useState();
-    const[password,setPassword]=useState();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-    const handleSubmit = (e) =>{
-        e.preventDefault();
-        axios.post('https://lostandfound-pq2d.onrender.com/api/user/register',{name,email,password}).then(result => console.log(result))
-        .catch(err=>console.log(err));
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!name || !email || !password) {
+      toast.warning("⚠️ Please fill all fields");
+      return;
     }
+
+    try {
+      const result = await axios.post(
+        "https://lostandfound-pq2d.onrender.com/api/user/register",
+        { name, email, password }
+      );
+
+      // ✅ Show success message
+      toast.success("🎉 Account created successfully!");
+
+      // Redirect to login after a short delay
+      setTimeout(() => navigate("/login"), 2000);
+    } catch (err) {
+      console.error(err);
+      toast.error("❌ Failed to create account. Try again.");
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-black via-gray-900 to-black p-4">
+      {/* Toast Container */}
+      <ToastContainer position="top-center" autoClose={3000} />
+
       <div className="bg-black/50 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl w-full max-w-md p-8 text-center space-y-6">
         <h2 className="text-3xl font-bold text-white">Create Account</h2>
         <p className="text-gray-400">
@@ -27,7 +53,7 @@ export default function Signup() {
               type="text"
               className="w-full bg-white/10 text-white rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-yellow-400 placeholder-gray-400"
               placeholder="Rohit Sharma"
-              onChange={(e)=>setName(e.target.value)}//assign the value
+              onChange={(e) => setName(e.target.value)}
             />
           </div>
 
@@ -37,7 +63,7 @@ export default function Signup() {
               type="email"
               className="w-full bg-white/10 text-white rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-yellow-400 placeholder-gray-400"
               placeholder="rohit@example.com"
-              onChange={(e)=>setEmail(e.target.value)}//assign the value
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
 
@@ -47,7 +73,7 @@ export default function Signup() {
               type="password"
               className="w-full bg-white/10 text-white rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-yellow-400 placeholder-gray-400"
               placeholder="••••••••"
-              onChange={(e)=>setPassword(e.target.value)}//assign the value
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
 

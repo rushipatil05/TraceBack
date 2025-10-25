@@ -44,4 +44,27 @@ router.get("/notifications/:email", async (req, res) => {
   }
 });
 
+// Update claim status (accept/reject)
+router.patch("/:id", async (req, res) => {
+  try {
+    const { status } = req.body; // "approved" or "rejected"
+    if (!["approved", "rejected"].includes(status)) {
+      return res.status(400).json({ message: "Invalid status" });
+    }
+
+    const claim = await Claim.findByIdAndUpdate(
+      req.params.id,
+      { status },
+      { new: true }
+    );
+
+    if (!claim) return res.status(404).json({ message: "Claim not found" });
+
+    res.json({ success: true, claim });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+
 export default router;

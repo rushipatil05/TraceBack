@@ -19,6 +19,7 @@ export function FindItem() {
           "https://lostandfound-pq2d.onrender.com/api/items"
         );
         setItems(res.data);
+        console.log(res.data);
       } catch (err) {
         console.error("Error fetching items:", err);
       }

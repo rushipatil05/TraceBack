@@ -51,10 +51,6 @@ export function Home() {
           <div className="flex items-center gap-3">
             {user ? (
               <>
-                <span className="text-white text-sm truncate max-w-[120px] sm:max-w-none text-right">
-                  👋 Hello,{" "}
-                  <span className="text-yellow-400 font-semibold">{user.name || user.email}</span>
-                </span>
                 <button
                   onClick={handleLogout}
                   className="hidden lg:inline-flex bg-yellow-400 text-black px-3 py-1.5 rounded-lg font-semibold hover:bg-yellow-500 transition-colors"
