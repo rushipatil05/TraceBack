@@ -7,11 +7,17 @@ export function FindItem() {
   const [searchTerm, setSearchTerm] = useState("");
   const [items, setItems] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [showClaimForm, setShowClaimForm] = useState(false);
+  const [answer, setAnswer] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [approved, setApproved] = useState(false);
 
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const res = await axios.get("https://lostandfound-pq2d.onrender.com/api/items");
+        const res = await axios.get(
+          "https://lostandfound-pq2d.onrender.com/api/items"
+        );
         setItems(res.data);
       } catch (err) {
         console.error("Error fetching items:", err);
@@ -21,24 +27,41 @@ export function FindItem() {
   }, []);
 
   const filteredItems = searchTerm
-    ? items.filter((item) =>
+    ? items.filter(
+      (item) =>
         item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (item.location && item.location.toLowerCase().includes(searchTerm.toLowerCase()))
-      )
+        item.description.toLowerCase().includes(searchTerm.toLowerCase())
+    )
     : items;
 
+  const handleClaimClick = () => setShowClaimForm(true);
+
+  const handleSubmitAnswer = async () => {
+    try {
+      await axios.post("https://lostandfound-pq2d.onrender.com/api/claim", {
+        itemId: selectedItem._id,
+        claimantName: "Anonymous User", // or take from logged-in user
+        claimantEmail: "anonymous@example.com", // or localStorage user.email
+        answer,
+      });
+      setSubmitted(true);
+      toast.success("✅ Your claim has been sent to the finder!");
+    } catch (err) {
+      console.error(err);
+      toast.error("❌ Failed to send claim");
+    }
+  };
+
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black">
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
       <Navbar />
 
-      {/* Main Container */}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">
         <h1 className="text-3xl md:text-4xl font-bold text-center text-white">
           Find Lost Items
         </h1>
 
-        {/* Search Bar */}
         <div className="max-w-2xl mx-auto relative">
           <input
             type="text"
@@ -50,7 +73,6 @@ export function FindItem() {
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
         </div>
 
-        {/* Items Grid */}
         {filteredItems.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-xl text-gray-300">No items found.</p>
@@ -76,7 +98,13 @@ export function FindItem() {
                   <p className="text-gray-400 text-sm">Posted by: {item.name}</p>
                   <p className="text-gray-300 line-clamp-2">{item.description}</p>
                   <button
-                    onClick={() => setSelectedItem(item)}
+                    onClick={() => {
+                      setSelectedItem(item);
+                      setShowClaimForm(false);
+                      setSubmitted(false);
+                      setApproved(false);
+                      setAnswer("");
+                    }}
                     className="w-full bg-yellow-400 text-black font-semibold py-2 rounded-lg hover:bg-yellow-500 transition-colors mt-4"
                   >
                     View Details
@@ -88,13 +116,9 @@ export function FindItem() {
         )}
       </div>
 
-      {/* Modal */}
       {selectedItem && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-xl"
-        >
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-xl">
           <div className="bg-white/10 border border-white/20 shadow-2xl rounded-2xl max-w-md w-full p-6 relative mx-4">
-            {/* Close Button */}
             <button
               onClick={() => setSelectedItem(null)}
               className="absolute top-4 right-4 text-white/70 hover:text-white transition-colors"
@@ -102,7 +126,6 @@ export function FindItem() {
               <X size={24} />
             </button>
 
-            {/* Item Image */}
             {selectedItem.file && (
               <img
                 src={selectedItem.file}
@@ -111,29 +134,70 @@ export function FindItem() {
               />
             )}
 
-            {/* Item Title */}
             <h2 className="text-2xl font-bold text-white mt-4">
               {selectedItem.title}
             </h2>
 
-            {/* Item Details */}
             <div className="space-y-3 mt-3 text-gray-200">
               <div className="flex items-center gap-2">
                 <User className="h-5 w-5 text-yellow-400" />
                 <span>Finder: {selectedItem.name}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Phone className="h-5 w-5 text-yellow-400" />
-                <span>Phone: {selectedItem.phone}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Mail className="h-5 w-5 text-yellow-400" />
-                <span>Email: {selectedItem.email}</span>
-              </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 mt-2">
                 <Paperclip className="h-5 w-5 text-yellow-400" />
                 <span>Description: {selectedItem.description}</span>
               </div>
+
+              {!approved && !submitted && !showClaimForm && (
+                <button
+                  onClick={handleClaimClick}
+                  className="w-full bg-yellow-400 text-black py-2 rounded-md mt-4 hover:bg-yellow-500 transition"
+                >
+                  This is my item
+                </button>
+              )}
+
+              {showClaimForm && !submitted && (
+                <div className="mt-4 space-y-2">
+                  <p className="text-gray-300">
+                    Finder’s Verification Question:{" "}
+                    <span className="font-semibold">{selectedItem.verify}</span>
+                  </p>
+
+                  <input
+                    type="text"
+                    value={answer}
+                    onChange={(e) => setAnswer(e.target.value)}
+                    placeholder="Your Answer"
+                    className="w-full p-2 rounded-md bg-gray-800 text-white border border-gray-700 focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400"
+                  />
+                  <button
+                    onClick={handleSubmitAnswer}
+                    className="w-full bg-yellow-400 text-black py-2 rounded-md hover:bg-yellow-500 transition"
+                  >
+                    Submit Answer
+                  </button>
+                </div>
+              )}
+
+              {submitted && !approved && (
+                <p className="text-gray-300 mt-4">
+                  Your answer was sent. Waiting for finder approval.
+                </p>
+              )}
+
+              {approved && (
+                <>
+                  <div className="flex items-center gap-2">
+                    <Phone className="h-5 w-5 text-yellow-400" />
+                    <span>Phone: {selectedItem.phone}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Mail className="h-5 w-5 text-yellow-400" />
+                    <span>Email: {selectedItem.email}</span>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>

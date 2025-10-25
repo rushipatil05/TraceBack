@@ -9,19 +9,23 @@ export function Navbar() {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
+  // Toggle Sidebar
   const handleSidebarToggle = () => setSidebarOpen(!isSidebarOpen);
 
+  // Load user data from localStorage
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) setUser(JSON.parse(storedUser));
   }, []);
 
+  // Logout
   const handleLogout = () => {
     localStorage.removeItem("user");
     setUser(null);
     navigate("/login");
   };
 
+  // Close sidebar when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -33,7 +37,6 @@ export function Navbar() {
         setSidebarOpen(false);
       }
     };
-
     if (isSidebarOpen) document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isSidebarOpen]);
@@ -42,7 +45,7 @@ export function Navbar() {
 
   return (
     <nav className="relative z-50">
-      {/* Main Navbar */}
+      {/* Navbar */}
       <div className="bg-black/90 p-4 sticky top-0 z-50 flex justify-between items-center border-b border-white/10 backdrop-blur-md">
         {/* Logo */}
         <NavLink to="/" className="flex items-center gap-2">
@@ -76,14 +79,12 @@ export function Navbar() {
           >
             Post Item
           </NavLink>
-
         </div>
 
         {/* Right Section */}
         <div className="flex items-center gap-3">
           {user ? (
             <>
-              {/* Hello message (visible on all screens, styled differently on mobile) */}
               <span className="text-white text-sm truncate max-w-[120px] sm:max-w-none text-right">
                 👋 Hello,{" "}
                 <span className="text-yellow-400 font-semibold">
@@ -91,7 +92,6 @@ export function Navbar() {
                 </span>
               </span>
 
-              {/* Hide logout on mobile */}
               <button
                 onClick={handleLogout}
                 className="hidden lg:inline-flex bg-yellow-400 text-black px-3 py-1.5 rounded-lg font-semibold hover:bg-yellow-500 transition-colors"
@@ -138,9 +138,11 @@ export function Navbar() {
       {/* Sidebar (Mobile) */}
       <div
         ref={sidebarRef}
-        className={`fixed top-0 right-0 h-full w-52 bg-black/90 backdrop-blur-lg border-l-2 border-yellow-400 flex flex-col justify-center items-center gap-10 text-white transition-transform duration-300 ${isSidebarOpen ? "translate-x-0" : "translate-x-full"
-          }`}
+        className={`fixed top-0 right-0 h-full w-52 bg-black/90 backdrop-blur-lg border-l-2 border-yellow-400 flex flex-col justify-center items-center gap-10 text-white transition-transform duration-300 ${
+          isSidebarOpen ? "translate-x-0" : "translate-x-full"
+        }`}
       >
+        {/* Close Button */}
         <button
           onClick={handleSidebarToggle}
           className="absolute top-6 right-4 text-white text-2xl hover:text-yellow-400 transition-colors"
@@ -149,23 +151,14 @@ export function Navbar() {
         </button>
 
         <NavLink to="/home" onClick={closeSidebar} className={({ isActive }) =>
-          `hover:text-yellow-400 ${isActive ? "text-yellow-400" : "text-white"}`
-        }>
-          Home
-        </NavLink>
+          `hover:text-yellow-400 ${isActive ? "text-yellow-400" : "text-white"}`}>Home</NavLink>
+
         <NavLink to="/find" onClick={closeSidebar} className={({ isActive }) =>
-          `hover:text-yellow-400 ${isActive ? "text-yellow-400" : "text-white"}`
-        }>
-          Find Item
-        </NavLink>
+          `hover:text-yellow-400 ${isActive ? "text-yellow-400" : "text-white"}`}>Find Item</NavLink>
+
         <NavLink to="/post" onClick={closeSidebar} className={({ isActive }) =>
-          `hover:text-yellow-400 ${isActive ? "text-yellow-400" : "text-white"}`
-        }>
-          Post Item
-        </NavLink>
+          `hover:text-yellow-400 ${isActive ? "text-yellow-400" : "text-white"}`}>Post Item</NavLink>
 
-
-        {/* Logout button inside sidebar for mobile */}
         {user && (
           <button
             onClick={handleLogout}

@@ -7,6 +7,7 @@ const itemSchema = new mongoose.Schema(
     phone: String,
     title: String,
     description: String,
+    verify:String,
     file: String,
   },
   { timestamps: true }

@@ -5,9 +5,9 @@ const router = express.Router();
 
 router.post("/", async (req, res) => {
   try {
-    const { name, email, phone, title, description, file } = req.body;
+    const { name, email, phone, title, description, verify, file } = req.body;
     console.log("Received file value:", file);
-    const newItem = new Item({ name, email, phone, title, description, file });
+    const newItem = new Item({ name, email, phone, title, description, verify, file });
     await newItem.save();
     res.status(201).json({ success: true, item: newItem });
   } catch (err) {
