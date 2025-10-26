@@ -4,67 +4,70 @@ import Item from "../models/Item.js";
 
 const router = express.Router();
 
-// Submit a claim
+// 📦 Create a new claim
 router.post("/", async (req, res) => {
   try {
     const { itemId, claimantName, claimantEmail, answer } = req.body;
-
     const item = await Item.findById(itemId);
-    if (!item) return res.status(404).json({ message: "Item not found" });
 
-    const newClaim = await Claim.create({
+    if (!item) {
+      return res.status(404).json({ message: "Item not found" });
+    }
+
+    const newClaim = new Claim({
       itemId,
+      finderEmail: item.email, // person who posted the item
       claimantName,
       claimantEmail,
       answer,
+      status: "pending",
     });
 
-    res.status(201).json({ success: true, claim: newClaim });
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    await newClaim.save();
+    res.status(201).json(newClaim);
+  } catch (error) {
+    res.status(500).json({ message: "Error creating claim", error });
   }
 });
 
-// Fetch claims for finder (to show notifications)
+// 📬 Get all pending notifications for finder
 router.get("/notifications/:email", async (req, res) => {
   try {
-    const finderEmail = req.params.email;
-
-    // find all items posted by finder
-    const finderItems = await Item.find({ email: finderEmail });
-    const itemIds = finderItems.map((i) => i._id);
-
-    // find all claims related to those items
-    const claims = await Claim.find({ itemId: { $in: itemIds }, status: "pending" })
-      .populate("itemId", "title");
-
+    const { email } = req.params;
+    const claims = await Claim.find({
+      finderEmail: email,
+      status: "pending",
+    }).populate("itemId");
     res.json(claims);
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching notifications", error });
   }
 });
 
-// Update claim status (accept/reject)
+// 📄 Get claim by ID (used for polling on claimant side)
+router.get("/:id", async (req, res) => {
+  try {
+    const claim = await Claim.findById(req.params.id).populate("itemId");
+    if (!claim) return res.status(404).json({ message: "Claim not found" });
+    res.json(claim);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching claim", error });
+  }
+});
+
+// ✅ Update claim status (approve / reject)
 router.patch("/:id", async (req, res) => {
   try {
-    const { status } = req.body; // "approved" or "rejected"
-    if (!["approved", "rejected"].includes(status)) {
-      return res.status(400).json({ message: "Invalid status" });
-    }
-
+    const { status } = req.body;
     const claim = await Claim.findByIdAndUpdate(
       req.params.id,
       { status },
       { new: true }
     );
-
-    if (!claim) return res.status(404).json({ message: "Claim not found" });
-
-    res.json({ success: true, claim });
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.json(claim);
+  } catch (error) {
+    res.status(500).json({ message: "Error updating claim", error });
   }
 });
-
 
 export default router;
