@@ -141,8 +141,13 @@ export function Navbar() {
                         className="text-sm border-b border-gray-700 pb-2 mb-2"
                       >
                         <p>
+                          <span className="text-yellow-400">Username:</span> {claim.claimantName}
+                        </p>
+                        
+                        <p>
                           <span className="text-yellow-400">Item:</span> {claim.itemId.title}
                         </p>
+                        
                         <p>
                           <span className="text-yellow-400">Answer:</span> {claim.answer}
                         </p>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Search, X, User, Phone, Mail, Paperclip } from "lucide-react";
 import axios from "axios";
 import { Navbar } from "./Navbar";
+import { ToastContainer, toast } from "react-toastify";
 
 export function FindItem() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -11,7 +12,9 @@ export function FindItem() {
   const [answer, setAnswer] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [approved, setApproved] = useState(false);
+  const [claimId, setClaimId] = useState(null);
 
+  // 🟡 Fetch all items
   useEffect(() => {
     const fetchItems = async () => {
       try {
@@ -19,7 +22,6 @@ export function FindItem() {
           "https://lostandfound-pq2d.onrender.com/api/items"
         );
         setItems(res.data);
-        console.log(res.data);
       } catch (err) {
         console.error("Error fetching items:", err);
       }
@@ -27,25 +29,86 @@ export function FindItem() {
     fetchItems();
   }, []);
 
+  // 🟡 Restore state from localStorage on reload
+  useEffect(() => {
+    const saved = JSON.parse(localStorage.getItem("activeClaim"));
+    if (saved) {
+      setClaimId(saved.claimId);
+      setSelectedItem(saved.selectedItem);
+      setSubmitted(true);
+      setApproved(saved.status === "approved");
+    }
+  }, []);
+
+  // 🟡 Poll claim status if pending
+  useEffect(() => {
+    if (!claimId || approved) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const res = await axios.get(
+          `https://lostandfound-pq2d.onrender.com/api/claim/${claimId}`
+        );
+
+        if (res.data.status === "approved") {
+          setApproved(true);
+          toast.success("✅ Your claim has been approved!");
+          localStorage.setItem(
+            "activeClaim",
+            JSON.stringify({
+              claimId,
+              selectedItem,
+              status: "approved",
+            })
+          );
+          clearInterval(interval);
+        }
+      } catch (err) {
+        console.error("Error checking claim status:", err);
+      }
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [claimId, approved, selectedItem]);
+
   const filteredItems = searchTerm
     ? items.filter(
-      (item) =>
-        item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.description.toLowerCase().includes(searchTerm.toLowerCase())
-    )
+        (item) =>
+          item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.description.toLowerCase().includes(searchTerm.toLowerCase())
+      )
     : items;
 
   const handleClaimClick = () => setShowClaimForm(true);
 
+  // 🟡 When user submits the claim
   const handleSubmitAnswer = async () => {
     try {
-      await axios.post("https://lostandfound-pq2d.onrender.com/api/claim", {
-        itemId: selectedItem._id,
-        claimantName: "Anonymous User", // or take from logged-in user
-        claimantEmail: "anonymous@example.com", // or localStorage user.email
-        answer,
-      });
+      const user = JSON.parse(localStorage.getItem("user"));
+
+      const res = await axios.post(
+        "https://lostandfound-pq2d.onrender.com/api/claim",
+        {
+          itemId: selectedItem._id,
+          claimantName: user?.name || "Anonymous User",
+          claimantEmail: user?.email || "anonymous@example.com",
+          answer,
+        }
+      );
+
       setSubmitted(true);
+      setClaimId(res.data._id);
+
+      // Save to localStorage persistently
+      localStorage.setItem(
+        "activeClaim",
+        JSON.stringify({
+          claimId: res.data._id,
+          selectedItem,
+          status: "pending",
+        })
+      );
+
       toast.success("✅ Your claim has been sent to the finder!");
     } catch (err) {
       console.error(err);
@@ -53,6 +116,11 @@ export function FindItem() {
     }
   };
 
+  // 🟡 Clear everything when closing
+  const handleClose = () => {
+    setSelectedItem(null);
+    setShowClaimForm(false);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
@@ -102,8 +170,6 @@ export function FindItem() {
                     onClick={() => {
                       setSelectedItem(item);
                       setShowClaimForm(false);
-                      setSubmitted(false);
-                      setApproved(false);
                       setAnswer("");
                     }}
                     className="w-full bg-yellow-400 text-black font-semibold py-2 rounded-lg hover:bg-yellow-500 transition-colors mt-4"
@@ -121,7 +187,7 @@ export function FindItem() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-xl">
           <div className="bg-white/10 border border-white/20 shadow-2xl rounded-2xl max-w-md w-full p-6 relative mx-4">
             <button
-              onClick={() => setSelectedItem(null)}
+              onClick={handleClose}
               className="absolute top-4 right-4 text-white/70 hover:text-white transition-colors"
             >
               <X size={24} />
@@ -149,6 +215,7 @@ export function FindItem() {
                 <span>Description: {selectedItem.description}</span>
               </div>
 
+              {/* ✅ Only show claim options if not yet submitted */}
               {!approved && !submitted && !showClaimForm && (
                 <button
                   onClick={handleClaimClick}
@@ -203,6 +270,7 @@ export function FindItem() {
           </div>
         </div>
       )}
+      <ToastContainer />
     </div>
   );
 }
