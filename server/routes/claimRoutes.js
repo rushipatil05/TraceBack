@@ -47,13 +47,45 @@ router.get("/notifications/:email", async (req, res) => {
 // 📄 Get claim by ID (used for polling on claimant side)
 router.get("/:id", async (req, res) => {
   try {
-    const claim = await Claim.findById(req.params.id).populate("itemId");
-    if (!claim) return res.status(404).json({ message: "Claim not found" });
+    const claim = await Claim.findById(req.params.id)
+      .populate({
+        path: "itemId",
+        select: "title description file name verify", // ❌ no phone/email
+      });
+
+    if (!claim) {
+      return res.status(404).json({ message: "Claim not found" });
+    }
+
     res.json(claim);
   } catch (error) {
     res.status(500).json({ message: "Error fetching claim", error });
   }
 });
+
+// 🔐 Get finder contact ONLY for approved claim
+router.get("/:id/contact", async (req, res) => {
+  try {
+    const claim = await Claim.findById(req.params.id).populate("itemId");
+
+    if (!claim) {
+      return res.status(404).json({ message: "Claim not found" });
+    }
+
+    if (claim.status !== "approved") {
+      return res.status(403).json({ message: "Claim not approved yet" });
+    }
+
+    res.json({
+      phone: claim.itemId.phone,
+      email: claim.itemId.email,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching contact details", error });
+  }
+});
+
+
 
 // ✅ Update claim status (approve / reject)
 router.patch("/:id", async (req, res) => {

@@ -177,17 +177,6 @@ export function PostItem() {
               onChange={handleFileChange}
             />
 
-            {/* Preview */}
-            {fileUrl && (
-              <div className="mt-4 text-center">
-                <img
-                  src={fileUrl}
-                  alt="Uploaded Preview"
-                  className="w-48 h-48 object-cover mx-auto rounded-lg border border-gray-700"
-                />
-              </div>
-            )}
-
             <button
               type="submit"
               disabled={uploading}

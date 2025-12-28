@@ -14,7 +14,6 @@ export function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Load and update user on page change
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     const parsedUser = storedUser ? JSON.parse(storedUser) : null;
@@ -29,17 +28,12 @@ export function Navbar() {
         `https://lostandfound-pq2d.onrender.com/api/claim/${claimId}`,
         { status }
       );
-
-      // Update notifications locally
-      setNotifications((prev) =>
-        prev.filter((claim) => claim._id !== claimId)
-      );
+      setNotifications((prev) => prev.filter((claim) => claim._id !== claimId));
     } catch (err) {
       console.error("Error updating claim status:", err);
     }
   };
 
-  // Fetch notifications
   const fetchNotifications = async (email) => {
     try {
       const res = await axios.get(
@@ -51,17 +45,14 @@ export function Navbar() {
     }
   };
 
-  // Toggle sidebar
   const handleSidebarToggle = () => setSidebarOpen((prev) => !prev);
 
-  // Logout user
   const handleLogout = () => {
     localStorage.removeItem("user");
     setUser(null);
     navigate("/login");
   };
 
-  // Close sidebar and dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -102,15 +93,16 @@ export function Navbar() {
               key={path}
               to={`/${path}`}
               className={({ isActive }) =>
-                `hover:text-yellow-400 transition-colors ${isActive ? "text-yellow-400" : "text-white"
+                `hover:text-yellow-400 transition-colors ${
+                  isActive ? "text-yellow-400" : "text-white"
                 }`
               }
             >
               {path === "home"
                 ? "Home"
                 : path === "find"
-                  ? "Find Item"
-                  : "Post Item"}
+                ? "Find Item"
+                : "Post Item"}
             </NavLink>
           ))}
         </div>
@@ -130,37 +122,47 @@ export function Navbar() {
               )}
 
               {showDropdown && (
-                <div className="absolute right-0 mt-3 bg-black/90 text-white p-3 rounded-lg border border-yellow-400 w-72 shadow-lg">
-                  <h4 className="text-yellow-400 mb-2 font-semibold">Notifications</h4>
+                <div className="absolute right-0 mt-3 bg-neutral-900/95 text-white p-3 rounded-lg shadow-xl w-72 border border-white/10">
+                  <h4 className="text-gray-200 mb-2 font-semibold text-sm">
+                    Notifications
+                  </h4>
+
                   {notifications.length === 0 ? (
-                    <p className="text-sm text-gray-400">No new claims</p>
+                    <div className="flex flex-col items-center justify-center text-center py-4 text-gray-400 text-sm">
+                      <p>No new claim requests</p>
+                    </div>
                   ) : (
                     notifications.map((claim) => (
                       <div
                         key={claim._id}
-                        className="text-sm border-b border-gray-700 pb-2 mb-2"
+                        className="text-sm border-b border-white/10 pb-2 mb-2 hover:bg-white/5 rounded-md p-2 transition"
                       >
                         <p>
-                          <span className="text-yellow-400">Username:</span> {claim.claimantName}
+                          <span className="text-gray-300">Username:</span>{" "}
+                          {claim.claimantName}
                         </p>
-                        
                         <p>
-                          <span className="text-yellow-400">Item:</span> {claim.itemId.title}
+                          <span className="text-gray-300">Item:</span>{" "}
+                          {claim.itemId.title}
                         </p>
-                        
                         <p>
-                          <span className="text-yellow-400">Answer:</span> {claim.answer}
+                          <span className="text-gray-300">Answer:</span>{" "}
+                          {claim.answer}
                         </p>
-                        <div className="flex gap-2 mt-1">
+                        <div className="flex gap-2 mt-2">
                           <button
-                            onClick={() => handleClaimAction(claim._id, "approved")}
-                            className="bg-green-500 px-2 py-1 rounded text-white text-xs hover:bg-green-600"
+                            onClick={() =>
+                              handleClaimAction(claim._id, "approved")
+                            }
+                            className="bg-green-500/90 px-2 py-1 rounded text-white text-xs hover:bg-green-600 transition"
                           >
                             Accept
                           </button>
                           <button
-                            onClick={() => handleClaimAction(claim._id, "rejected")}
-                            className="bg-red-500 px-2 py-1 rounded text-white text-xs hover:bg-red-600"
+                            onClick={() =>
+                              handleClaimAction(claim._id, "rejected")
+                            }
+                            className="bg-red-500/90 px-2 py-1 rounded text-white text-xs hover:bg-red-600 transition"
                           >
                             Reject
                           </button>
@@ -168,7 +170,6 @@ export function Navbar() {
                       </div>
                     ))
                   )}
-
                 </div>
               )}
             </div>
@@ -251,24 +252,35 @@ export function Navbar() {
       {/* Sidebar (Mobile) */}
       <div
         ref={sidebarRef}
-        className={`fixed top-0 right-0 h-full w-56 bg-black/90 backdrop-blur-lg border-l border-yellow-400 flex flex-col justify-center items-center gap-10 text-white transform transition-transform duration-300 ${isSidebarOpen ? "translate-x-0" : "translate-x-full"
-          }`}
+        className={`fixed top-0 right-0 h-full w-56 bg-black/95 backdrop-blur-lg border-l border-yellow-400 flex flex-col justify-center items-center gap-8 text-white transform transition-transform duration-300 ${
+          isSidebarOpen ? "translate-x-0" : "translate-x-full"
+        }`}
       >
+        {user && (
+          <p className="text-sm text-gray-300 text-center mb-4">
+            👋 Hello,{" "}
+            <span className="text-yellow-400 font-semibold">
+              {user.name || user.email}
+            </span>
+          </p>
+        )}
+
         {["home", "find", "post"].map((path) => (
           <NavLink
             key={path}
             to={`/${path}`}
             onClick={() => setSidebarOpen(false)}
             className={({ isActive }) =>
-              `hover:text-yellow-400 transition-colors ${isActive ? "text-yellow-400" : "text-white"
+              `hover:text-yellow-400 transition-colors ${
+                isActive ? "text-yellow-400" : "text-white"
               }`
             }
           >
             {path === "home"
               ? "Home"
               : path === "find"
-                ? "Find Item"
-                : "Post Item"}
+              ? "Find Item"
+              : "Post Item"}
           </NavLink>
         ))}
 

@@ -34,13 +34,23 @@ export function FindItem() {
     const saved = JSON.parse(localStorage.getItem("activeClaim"));
     if (saved) {
       setClaimId(saved.claimId);
-      setSelectedItem(saved.selectedItem);
       setSubmitted(true);
       setApproved(saved.status === "approved");
+
+      // 🔒 Don't open the modal immediately
+      // Instead, keep a lightweight reference to the saved item
+      setItems((prev) => {
+        // If we already fetched items, update selected item later when user clicks
+        const existing = prev.find((i) => i._id === saved.selectedItem._id);
+        if (existing) setSelectedItem(null); // prevent auto-open
+        return prev;
+      });
     }
   }, []);
 
-  // 🟡 Poll claim status if pending
+
+  //  Poll claim status if pending
+  //  Poll claim status every 5s
   useEffect(() => {
     if (!claimId || approved) return;
 
@@ -50,17 +60,37 @@ export function FindItem() {
           `https://lostandfound-pq2d.onrender.com/api/claim/${claimId}`
         );
 
-        if (res.data.status === "approved") {
+        // ✅ If the API returns an array, find the one with matching claimId
+        const claimData = Array.isArray(res.data)
+          ? res.data.find((c) => c._id === claimId)
+          : res.data;
+
+        if (claimData && claimData.status === "approved") {
           setApproved(true);
           toast.success("✅ Your claim has been approved!");
+
+          // ✅ Fetch the approved item again for latest phone/email
+          const contactRes = await axios.get(
+            `https://lostandfound-pq2d.onrender.com/api/claim/${claimId}/contact`
+          );
+
+          setSelectedItem((prev) => ({
+            ...prev,
+            phone: contactRes.data.phone,
+            email: contactRes.data.email,
+          }));
+
+
+          // Persist updated state
           localStorage.setItem(
             "activeClaim",
             JSON.stringify({
               claimId,
-              selectedItem,
+              selectedItem: itemRes.data,
               status: "approved",
             })
           );
+
           clearInterval(interval);
         }
       } catch (err) {
@@ -69,14 +99,16 @@ export function FindItem() {
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [claimId, approved, selectedItem]);
+  }, [claimId, approved]);
+
+
 
   const filteredItems = searchTerm
     ? items.filter(
-        (item) =>
-          item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.description.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+      (item) =>
+        item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.description.toLowerCase().includes(searchTerm.toLowerCase())
+    )
     : items;
 
   const handleClaimClick = () => setShowClaimForm(true);
@@ -260,12 +292,14 @@ export function FindItem() {
                     <Phone className="h-5 w-5 text-yellow-400" />
                     <span>Phone: {selectedItem.phone}</span>
                   </div>
+
                   <div className="flex items-center gap-2">
                     <Mail className="h-5 w-5 text-yellow-400" />
                     <span>Email: {selectedItem.email}</span>
                   </div>
                 </>
               )}
+
             </div>
           </div>
         </div>

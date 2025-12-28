@@ -3,11 +3,11 @@ import mongoose from "mongoose";
 const itemSchema = new mongoose.Schema(
   {
     name: String,
-    email: String,
-    phone: String,
+    phone: { type: String, select: false },
+    email: { type: String, select: false },
     title: String,
     description: String,
-    verify:String,
+    verify: String,
     file: String,
   },
   { timestamps: true }
