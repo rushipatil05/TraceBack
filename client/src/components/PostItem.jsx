@@ -65,7 +65,7 @@ export function PostItem() {
 
       // Send to backend
       await axios.post(
-        `${import.meta.env.VITE_SERVER_URL}/api/items`,
+        "https://lostandfound-pq2d.onrender.com/api/items",
         {
           ...formData,
           name: user.name,

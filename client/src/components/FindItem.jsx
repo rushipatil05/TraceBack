@@ -71,12 +71,12 @@ export function FindItem() {
       const interval = setInterval(async () => {
         try {
           const res = await axios.get(
-            `${import.meta.env.VITE_SERVER_URL}/api/claim/${claim.claimId}`
+            "https://lostandfound-pq2d.onrender.com/api/claim/${claim.claimId}"
           );
 
           if (res.data.status === "approved") {
             const contactRes = await axios.get(
-              `${import.meta.env.VITE_SERVER_URL}/api/claim/${claim.claimId}/contact`
+              "https://lostandfound-pq2d.onrender.com/api/claim/${claim.claimId}/contact"
             );
 
             setClaims((prev) => ({
