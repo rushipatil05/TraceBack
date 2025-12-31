@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Search, X, User, Phone, Mail, Paperclip } from "lucide-react";
 import axios from "axios";
 import { Navbar } from "./Navbar";
@@ -11,8 +11,11 @@ export function FindItem() {
   const [showClaimForm, setShowClaimForm] = useState(false);
   const [answer, setAnswer] = useState("");
 
-  // 🔑 PER-ITEM CLAIM STATE
+  // 🔑 Claim state per item
   const [claims, setClaims] = useState({});
+
+  // 🔁 Polling references
+  const pollingRefs = useRef({});
 
   /* ================= FETCH ITEMS ================= */
   useEffect(() => {
@@ -54,29 +57,27 @@ export function FindItem() {
       }));
 
       setShowClaimForm(false);
-      toast.success("✅ Claim sent successfully");
+      toast.success("Claim sent successfully");
     } catch (err) {
       console.error(err);
-      toast.error("❌ Failed to submit claim");
+      toast.error("Failed to submit claim");
     }
   };
 
   /* ================= POLL CLAIM STATUS ================= */
   useEffect(() => {
-    const intervals = [];
-
     Object.entries(claims).forEach(([itemId, claim]) => {
-      if (!claim.claimId || claim.approved) return;
+      if (!claim.claimId || claim.approved || pollingRefs.current[itemId]) return;
 
-      const interval = setInterval(async () => {
+      pollingRefs.current[itemId] = setInterval(async () => {
         try {
           const res = await axios.get(
-            "https://lostandfound-pq2d.onrender.com/api/claim/${claim.claimId}"
+            `https://lostandfound-pq2d.onrender.com/api/claim/${claim.claimId}`
           );
 
           if (res.data.status === "approved") {
             const contactRes = await axios.get(
-              "https://lostandfound-pq2d.onrender.com/api/claim/${claim.claimId}/contact"
+              `https://lostandfound-pq2d.onrender.com/api/claim/${claim.claimId}/contact`
             );
 
             setClaims((prev) => ({
@@ -89,27 +90,34 @@ export function FindItem() {
               },
             }));
 
-            toast.success("✅ Claim approved!");
-            clearInterval(interval);
+            clearInterval(pollingRefs.current[itemId]);
+            delete pollingRefs.current[itemId];
+
+            toast.success("Claim approved!");
           }
         } catch (err) {
           console.error("Polling error:", err);
         }
       }, 5000);
-
-      intervals.push(interval);
     });
 
-    return () => intervals.forEach(clearInterval);
+    return () => {
+      Object.values(pollingRefs.current).forEach(clearInterval);
+      pollingRefs.current = {};
+    };
   }, [claims]);
 
   /* ================= SEARCH ================= */
   const filteredItems = searchTerm
     ? items.filter(
-      (item) =>
-        item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.description.toLowerCase().includes(searchTerm.toLowerCase())
-    )
+        (item) =>
+          (item.title || "")
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          (item.description || "")
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase())
+      )
     : items;
 
   const claim = selectedItem ? claims[selectedItem._id] : null;
@@ -145,9 +153,8 @@ export function FindItem() {
                 className="w-full h-56 object-cover"
               />
 
-
               <div className="p-5 space-y-3">
-                <h3 className="text-xl font-semibold text-white truncate">
+                <h3 className="text-xl font-semibold truncate">
                   {item.title || "Untitled"}
                 </h3>
 
@@ -170,7 +177,6 @@ export function FindItem() {
                   View Details
                 </button>
               </div>
-
             </div>
           ))}
         </div>
@@ -181,37 +187,35 @@ export function FindItem() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-xl">
           <div className="bg-white/10 border border-white/20 shadow-2xl rounded-2xl max-w-md w-full p-6 relative mx-4">
             <button
-              onClick={() => setSelectedItem(null)}
-              className="absolute top-4 right-4 text-white/70 hover:text-white transition-colors"
+              onClick={() => {
+                setSelectedItem(null);
+                setShowClaimForm(false);
+              }}
+              className="absolute top-4 right-4 text-white/70 hover:text-white"
             >
               <X />
             </button>
 
-            {/* IMAGE */}
             <img
               src={selectedItem.file || "/placeholder.png"}
               alt={selectedItem.title}
-              className="w-full max-h-80 object-contain rounded-lg mx-auto"
+              className="w-full max-h-80 object-contain rounded-lg"
             />
 
-            {/* TITLE */}
-            <h2 className="text-2xl font-bold">
+            <h2 className="text-2xl font-bold mt-3">
               {selectedItem.title}
             </h2>
 
-            {/* FINDER */}
             <p className="mt-2 text-gray-300 flex items-center gap-2">
               <User className="w-4 h-4 text-yellow-400" />
               Finder: {selectedItem.name || "Unknown"}
             </p>
 
-            {/* DESCRIPTION */}
             <p className="mt-3 text-gray-200 flex items-start gap-2">
               <Paperclip className="w-4 h-4 mt-1 text-yellow-400" />
-              <span>{selectedItem.description || "No description provided"}</span>
+              {selectedItem.description}
             </p>
 
-            {/* CLAIM BUTTON */}
             {!claim?.submitted && (
               <button
                 onClick={() => setShowClaimForm(true)}
@@ -221,12 +225,13 @@ export function FindItem() {
               </button>
             )}
 
-            {/* CLAIM FORM */}
             {showClaimForm && !claim?.submitted && (
               <div className="mt-4 space-y-2">
                 <p>
                   Verification:{" "}
-                  <span className="font-semibold">{selectedItem.verify}</span>
+                  <span className="font-semibold">
+                    {selectedItem.verify}
+                  </span>
                 </p>
                 <input
                   value={answer}
@@ -243,14 +248,12 @@ export function FindItem() {
               </div>
             )}
 
-            {/* WAITING */}
             {claim?.submitted && !claim?.approved && (
               <p className="mt-4 text-gray-300">
                 Waiting for finder approval…
               </p>
             )}
 
-            {/* APPROVED */}
             {claim?.approved && (
               <div className="mt-4 space-y-2">
                 <p><Phone className="inline mr-2" /> {claim.phone}</p>
@@ -260,6 +263,7 @@ export function FindItem() {
           </div>
         </div>
       )}
+
       <ToastContainer />
     </div>
   );

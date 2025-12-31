@@ -14,7 +14,7 @@ export default function Signup() {
     e.preventDefault();
 
     if (!name || !email || !password) {
-      toast.warning("⚠️ Please fill all fields");
+      toast.warning(" Please fill all fields");
       return;
     }
 
@@ -25,7 +25,7 @@ export default function Signup() {
       );
 
       // ✅ Show success message
-      toast.success("🎉 Account created successfully!");
+      toast.success("Account created successfully!");
 
       // Redirect to login after a short delay
       setTimeout(() => navigate("/login"), 2000);

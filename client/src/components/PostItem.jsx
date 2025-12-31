@@ -75,7 +75,7 @@ export function PostItem() {
       );
 
 
-      toast.success("✅ Item posted successfully!");
+      toast.success(" Item posted successfully!");
 
       // Reset form
       setFormData({
@@ -89,7 +89,7 @@ export function PostItem() {
       setFileUrl("");
     } catch (err) {
       console.error("Error posting item:", err);
-      toast.error("❌ Error: " + err.message);
+      toast.error(" Error: " + err.message);
     } finally {
       setUploading(false);
     }
