@@ -8,7 +8,7 @@ const router = express.Router();
 router.post("/", async (req, res) => {
   try {
     const { itemId, claimantName, claimantEmail, answer } = req.body;
-    const item = await Item.findById(itemId);
+    const item = await Item.findById(itemId).select("+email +phone");
 
     if (!item) {
       return res.status(404).json({ message: "Item not found" });
@@ -66,7 +66,11 @@ router.get("/:id", async (req, res) => {
 // 🔐 Get finder contact ONLY for approved claim
 router.get("/:id/contact", async (req, res) => {
   try {
-    const claim = await Claim.findById(req.params.id).populate("itemId");
+    const claim = await Claim.findById(req.params.id).populate({
+      path: "itemId",
+      select: "+phone +email",
+    });
+
 
     if (!claim) {
       return res.status(404).json({ message: "Claim not found" });
