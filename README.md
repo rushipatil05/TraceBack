@@ -93,16 +93,6 @@ Once the finder approves the claim:
 
 ---
 
-## 🧩 Prerequisites
-
-Before running the project, ensure you have:
-
-- **Node.js** (v14 or higher)
-- **MongoDB** (Local instance or MongoDB Atlas)
-- **Cloudinary Account** (for image uploads)
-
----
-
 ## 🎯 Use Case
 
 This application is ideal for environments where items are frequently misplaced and quick recovery is essential:
@@ -113,16 +103,6 @@ This application is ideal for environments where items are frequently misplaced 
 - 🔎 Closed-community Lost & Found Systems  
 
 TraceBack reduces confusion, saves time, and provides a secure and organized workflow to reunite lost items with their owners.
-
----
-
-## 🔐 Security & Privacy
-
-- Contact details are hidden by default  
-- Revealed only after claim approval  
-- Verification questions prevent false claims  
-- Sensitive fields protected via backend access control  
-
 ---
 
 ## 🎉 Conclusion
