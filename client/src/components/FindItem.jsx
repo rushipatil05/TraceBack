@@ -21,7 +21,7 @@ export function FindItem() {
         const res = await axios.get(
           `${import.meta.env.VITE_SERVER_URL}/api/items`
         );
-        setItems(res.data);
+        setItems(Array.isArray(res.data) ? res.data : res.data.items || []);
       } catch (err) {
         console.error("Error fetching items:", err);
       }
