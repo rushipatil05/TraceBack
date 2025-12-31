@@ -109,9 +109,17 @@ export function PostItem() {
           </p>
 
           <form className="space-y-5" onSubmit={handleSubmit}>
-            <div className="text-gray-400 text-sm">
-              Posting as <span className="text-yellow-400">{user?.name}</span> ({user?.email})
+            <div className="flex items-center gap-2 text-sm text-gray-300 bg-black/40 border border-dashed border-yellow-400/30 rounded-lg px-4 py-2 cursor-default select-none">
+              <span className="text-gray-500">👤 Posting as</span>
+              <span className="font-semibold text-yellow-400">
+                {user?.name}
+              </span>
+              <span className="text-gray-500">
+                ({user?.email})
+              </span>
             </div>
+
+
             <input
               type="tel"
               name="phone"
