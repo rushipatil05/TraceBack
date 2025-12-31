@@ -7,14 +7,12 @@ import { Navbar } from "./Navbar";
 
 export function PostItem() {
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
     phone: "",
     title: "",
     description: "",
-    verify: "", // ✅ Added verify field
+    verify: "",
   });
-
+  const user = JSON.parse(localStorage.getItem("user"));
   const [file, setFile] = useState(null);
   const [fileUrl, setFileUrl] = useState("");
   const [uploading, setUploading] = useState(false);
@@ -32,8 +30,8 @@ export function PostItem() {
 
     // Validation
     if (
-      !formData.name ||
-      !formData.email ||
+      !user?.name ||
+      !user?.email ||
       !formData.phone ||
       !formData.title ||
       !formData.description ||
@@ -42,6 +40,7 @@ export function PostItem() {
       toast.warning("Please fill all fields before submitting");
       return;
     }
+
 
     if (!file) {
       toast.warning("Please select a file to upload");
@@ -65,22 +64,27 @@ export function PostItem() {
       setFileUrl(uploadedFileUrl);
 
       // Send to backend
-      await axios.post("https://lostandfound-pq2d.onrender.com/api/items", {
-        ...formData,
-        file: uploadedFileUrl,
-      });
+      await axios.post(
+        `${import.meta.env.VITE_SERVER_URL}/api/items`,
+        {
+          ...formData,
+          name: user.name,
+          email: user.email,
+          file: uploadedFileUrl,
+        }
+      );
+
 
       toast.success("✅ Item posted successfully!");
 
       // Reset form
       setFormData({
-        name: "",
-        email: "",
         phone: "",
         title: "",
         description: "",
         verify: "",
       });
+
       setFile(null);
       setFileUrl("");
     } catch (err) {
@@ -105,24 +109,9 @@ export function PostItem() {
           </p>
 
           <form className="space-y-5" onSubmit={handleSubmit}>
-            <input
-              type="text"
-              name="name"
-              placeholder="Name"
-              value={formData.name}
-              onChange={handleChange}
-              className="w-full p-3 bg-black border border-gray-700 rounded-md text-white focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400"
-            />
-
-            <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full p-3 bg-black border border-gray-700 rounded-md text-white focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400"
-            />
-
+            <div className="text-gray-400 text-sm">
+              Posting as <span className="text-yellow-400">{user?.name}</span> ({user?.email})
+            </div>
             <input
               type="tel"
               name="phone"

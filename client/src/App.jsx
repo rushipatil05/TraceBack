@@ -7,7 +7,7 @@ import { FindItem } from "./components/FindItem.jsx";
 import { PostItem } from "./components/PostItem.jsx";
 import { AboutUs } from "./components/AboutUs.jsx";
 import Login from "./components/Login.jsx";
-import Signup from "./components/Signup.jsx";
+import Signup from "./components/signup.jsx";
 
 function App() {
   return (

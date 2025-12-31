@@ -21,6 +21,13 @@ export function Home() {
     setUser(null);
     navigate("/login");
   };
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+
+    if (storedUser) {
+      navigate("/home");
+    }
+  }, [navigate]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -88,9 +95,8 @@ export function Home() {
         {/* Sidebar */}
         <div
           ref={sidebarRef}
-          className={`fixed top-0 right-0 h-full w-52 bg-black/90 backdrop-blur-lg border-l-2 border-yellow-400 flex flex-col justify-center items-center gap-10 text-white transition-transform duration-300 ${
-            isSidebarOpen ? "translate-x-0" : "translate-x-full"
-          }`}
+          className={`fixed top-0 right-0 h-full w-52 bg-black/90 backdrop-blur-lg border-l-2 border-yellow-400 flex flex-col justify-center items-center gap-10 text-white transition-transform duration-300 ${isSidebarOpen ? "translate-x-0" : "translate-x-full"
+            }`}
         >
           <button
             onClick={handleSidebarToggle}
