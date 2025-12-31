@@ -19,9 +19,9 @@ export function FindItem() {
     const fetchItems = async () => {
       try {
         const res = await axios.get(
-          `${import.meta.env.VITE_SERVER_URL}/api/items`
+          "https://lostandfound-pq2d.onrender.com/api/items"
         );
-        setItems(Array.isArray(res.data) ? res.data : res.data.items || []);
+        setItems(res.data);
       } catch (err) {
         console.error("Error fetching items:", err);
       }
@@ -35,7 +35,7 @@ export function FindItem() {
       const user = JSON.parse(localStorage.getItem("user"));
 
       const res = await axios.post(
-        `${import.meta.env.VITE_SERVER_URL}/api/claim`,
+        "https://lostandfound-pq2d.onrender.com/api/claim",
         {
           itemId: selectedItem._id,
           claimantName: user?.name || "Anonymous User",
