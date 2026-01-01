@@ -47,7 +47,6 @@ export function Home() {
 
   return (
     <>
-      {/* Navbar */}
       <nav className="relative z-50">
         <div className="bg-black/90 p-4 sticky top-0 z-50 flex justify-between items-center border-b border-white/10 backdrop-blur-md">
           <Link to="/" className="flex items-center gap-2">
@@ -124,9 +123,7 @@ export function Home() {
         </div>
       </nav>
 
-      {/* Main Content */}
       <div className="max-w-6xl mx-auto px-6 py-16 space-y-16">
-        {/* Hero Section */}
         <section className="text-center space-y-6">
           <h1 className="text-5xl font-bold text-white">
             Lost Something? <span className="text-yellow-400">Find it Here</span>
@@ -147,7 +144,6 @@ export function Home() {
           </div>
         </section>
 
-        {/* Feature Cards */}
         <section className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
           <div className="bg-black/50 p-6 rounded-2xl text-center space-y-4 shadow-lg hover:bg-black/60 transition">
             <Search className="w-12 h-12 text-yellow-400 mx-auto" />

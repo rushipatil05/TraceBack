@@ -5,10 +5,8 @@ import { Navbar } from './Navbar';
 export function AboutUs() {
   return (
     <>
-        <Navbar />
+      <Navbar />
       <div className="min-h-screen px-4 sm:px-6 md:px-10 lg:px-16 py-12 space-y-16 bg-gradient-to-b from-black via-gray-900 to-black">
-
-        {/* Header Section */}
         <section className="text-center space-y-6">
           <h1 className="text-4xl md:text-5xl font-bold text-white">TraceBack</h1>
           <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
@@ -18,7 +16,6 @@ export function AboutUs() {
           </p>
         </section>
 
-        {/* Mission Section */}
         <section className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           <div className="bg-black/70 p-8 rounded-2xl text-center space-y-4 border border-gray-700 hover:border-yellow-400 transition-all">
             <Heart className="h-12 w-12 text-yellow-400 mx-auto" />
@@ -45,15 +42,12 @@ export function AboutUs() {
             </p>
           </div>
         </section>
-
-        {/* How It Works Section */}
         <section className="bg-black/70 p-8 md:p-10 rounded-2xl border border-gray-700 space-y-8">
           <h2 className="text-2xl md:text-3xl font-bold text-white text-center">
             How It Works
           </h2>
 
           <div className="space-y-8 max-w-3xl mx-auto">
-            {/* Step 1 */}
             <div className="flex flex-col sm:flex-row items-start gap-4">
               <div className="bg-yellow-400 text-black font-bold w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0">
                 1
@@ -66,7 +60,6 @@ export function AboutUs() {
               </div>
             </div>
 
-            {/* Step 2 */}
             <div className="flex flex-col sm:flex-row items-start gap-4">
               <div className="bg-yellow-400 text-black font-bold w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0">
                 2
@@ -79,7 +72,6 @@ export function AboutUs() {
               </div>
             </div>
 
-            {/* Step 3 */}
             <div className="flex flex-col sm:flex-row items-start gap-4">
               <div className="bg-yellow-400 text-black font-bold w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0">
                 3

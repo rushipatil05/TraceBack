@@ -24,20 +24,17 @@ export default function Signup() {
         { name, email, password }
       );
 
-      // ✅ Show success message
       toast.success("Account created successfully!");
 
-      // Redirect to login after a short delay
       setTimeout(() => navigate("/login"), 2000);
     } catch (err) {
       console.error(err);
-      toast.error("❌ Failed to create account. Try again.");
+      toast.error("Failed to create account. Try again.");
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-black via-gray-900 to-black p-4">
-      {/* Toast Container */}
       <ToastContainer position="top-center" autoClose={3000} />
 
       <div className="bg-black/50 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl w-full max-w-md p-8 text-center space-y-6">

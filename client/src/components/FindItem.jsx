@@ -11,13 +11,10 @@ export function FindItem() {
   const [showClaimForm, setShowClaimForm] = useState(false);
   const [answer, setAnswer] = useState("");
 
-  // 🔑 Claim state per item
   const [claims, setClaims] = useState({});
 
-  // 🔁 Polling references
   const pollingRefs = useRef({});
 
-  /* ================= FETCH ITEMS ================= */
   useEffect(() => {
     const fetchItems = async () => {
       try {
@@ -32,7 +29,6 @@ export function FindItem() {
     fetchItems();
   }, []);
 
-  /* ================= SUBMIT CLAIM ================= */
   const handleSubmitAnswer = async () => {
     try {
       const user = JSON.parse(localStorage.getItem("user"));
@@ -64,7 +60,6 @@ export function FindItem() {
     }
   };
 
-  /* ================= POLL CLAIM STATUS ================= */
   useEffect(() => {
     Object.entries(claims).forEach(([itemId, claim]) => {
       if (!claim.claimId || claim.approved || pollingRefs.current[itemId]) return;
@@ -107,7 +102,6 @@ export function FindItem() {
     };
   }, [claims]);
 
-  /* ================= SEARCH ================= */
   const filteredItems = searchTerm
     ? items.filter(
         (item) =>
@@ -122,7 +116,6 @@ export function FindItem() {
 
   const claim = selectedItem ? claims[selectedItem._id] : null;
 
-  /* ================= UI ================= */
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
       <Navbar />
@@ -182,7 +175,6 @@ export function FindItem() {
         </div>
       </div>
 
-      {/* ================= MODAL ================= */}
       {selectedItem && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-xl">
           <div className="bg-white/10 border border-white/20 shadow-2xl rounded-2xl max-w-md w-full p-6 relative mx-4">

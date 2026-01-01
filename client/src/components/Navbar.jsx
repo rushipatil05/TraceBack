@@ -78,15 +78,12 @@ export function Navbar() {
 
   return (
     <nav className="relative z-[999]">
-      {/* Navbar */}
       <div className="bg-black/90 p-4 sticky top-0 flex justify-between items-center border-b border-white/10 backdrop-blur-md">
-        {/* Logo */}
         <NavLink to="/" className="flex items-center gap-2">
           <AlertTriangle className="h-8 w-8 text-yellow-400" />
           <span className="text-xl font-bold text-white">TraceBack</span>
         </NavLink>
 
-        {/* Desktop Links */}
         <div className="hidden lg:flex gap-6">
           {["home", "find", "post"].map((path) => (
             <NavLink
@@ -107,7 +104,6 @@ export function Navbar() {
           ))}
         </div>
 
-        {/* Right Section */}
         <div className="flex items-center gap-3 relative">
           {user && (
             <div className="relative" ref={dropdownRef}>
@@ -208,7 +204,6 @@ export function Navbar() {
             </>
           )}
 
-          {/* Mobile Menu Button */}
           <button
             ref={buttonRef}
             onClick={handleSidebarToggle}
@@ -249,7 +244,6 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* Sidebar (Mobile) */}
       <div
         ref={sidebarRef}
         className={`fixed top-0 right-0 h-full w-56 bg-black/95 backdrop-blur-lg border-l border-yellow-400 flex flex-col justify-center items-center gap-8 text-white transform transition-transform duration-300 ${

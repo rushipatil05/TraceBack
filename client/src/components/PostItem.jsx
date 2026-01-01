@@ -28,7 +28,6 @@ export function PostItem() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validation
     if (
       !user?.name ||
       !user?.email ||
@@ -77,7 +76,6 @@ export function PostItem() {
 
       toast.success(" Item posted successfully!");
 
-      // Reset form
       setFormData({
         phone: "",
         title: "",
@@ -147,7 +145,6 @@ export function PostItem() {
               className="w-full p-3 bg-black border border-gray-700 rounded-md text-white focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400"
             />
 
-            {/* ✅ Properly fixed Verify question field */}
             <input
               type="text"
               name="verify"

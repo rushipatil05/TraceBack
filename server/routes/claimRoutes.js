@@ -4,7 +4,6 @@ import Item from "../models/Item.js";
 
 const router = express.Router();
 
-// 📦 Create a new claim
 router.post("/", async (req, res) => {
   try {
     const { itemId, claimantName, claimantEmail, answer } = req.body;
@@ -29,8 +28,6 @@ router.post("/", async (req, res) => {
     res.status(500).json({ message: "Error creating claim", error });
   }
 });
-
-// 📬 Get all pending notifications for finder
 router.get("/notifications/:email", async (req, res) => {
   try {
     const { email } = req.params;
@@ -44,7 +41,6 @@ router.get("/notifications/:email", async (req, res) => {
   }
 });
 
-// 📄 Get claim by ID (used for polling on claimant side)
 router.get("/:id", async (req, res) => {
   try {
     const claim = await Claim.findById(req.params.id)
@@ -63,7 +59,6 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// 🔐 Get finder contact ONLY for approved claim
 router.get("/:id/contact", async (req, res) => {
   try {
     const claim = await Claim.findById(req.params.id).populate({
@@ -91,7 +86,6 @@ router.get("/:id/contact", async (req, res) => {
 
 
 
-// ✅ Update claim status (approve / reject)
 router.patch("/:id", async (req, res) => {
   try {
     const { status } = req.body;
