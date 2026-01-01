@@ -107,15 +107,34 @@ export function PostItem() {
           </p>
 
           <form className="space-y-5" onSubmit={handleSubmit}>
-            <div className="flex items-center gap-2 text-sm text-gray-300 bg-black/40 border border-dashed border-yellow-400/30 rounded-lg px-4 py-2 cursor-default select-none">
-              <span className="text-gray-500">👤 Posting as</span>
-              <span className="font-semibold text-yellow-400">
-                {user?.name}
+            <div
+              className="
+            flex flex-col gap-1
+            sm:flex-row sm:items-center sm:gap-2
+            text-xs sm:text-sm
+            text-gray-300
+            bg-black/40
+            border border-dashed border-yellow-400/30
+            rounded-lg
+            px-3 py-2
+            sm:px-4 sm:py-2
+            cursor-default select-none
+            max-w-full
+          "
+            >
+              <span className="flex items-center gap-1 text-gray-500 whitespace-nowrap">
+                <span>👤 Posting as</span>
+                <span className="font-semibold text-yellow-400 truncate max-w-[60vw] sm:max-w-none">
+                  {user?.name}
+                </span>
               </span>
-              <span className="text-gray-500">
+
+
+              <span className="text-gray-500 truncate max-w-full">
                 ({user?.email})
               </span>
             </div>
+
 
 
             <input
